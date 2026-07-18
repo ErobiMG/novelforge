@@ -613,6 +613,26 @@ function registerEventListeners() {
             }
         });
     }
+
+    // Focus Mode Toggle listener
+    const btnToggleFocus = document.getElementById('btn-toggle-focus');
+    if (btnToggleFocus) {
+        btnToggleFocus.addEventListener('click', () => {
+            document.body.classList.toggle('focus-mode-active');
+            const isActive = document.body.classList.contains('focus-mode-active');
+            if (isActive) {
+                btnToggleFocus.innerHTML = `<i class="fa-solid fa-compress"></i> Exit`;
+                btnToggleFocus.style.background = 'rgba(239, 68, 68, 0.15)';
+                btnToggleFocus.style.color = 'var(--danger)';
+                btnToggleFocus.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            } else {
+                btnToggleFocus.innerHTML = `<i class="fa-solid fa-expand"></i> Focus`;
+                btnToggleFocus.style.background = 'rgba(168, 85, 247, 0.15)';
+                btnToggleFocus.style.color = 'var(--accent)';
+                btnToggleFocus.style.borderColor = 'rgba(168, 85, 247, 0.3)';
+            }
+        });
+    }
 }
 
 // Switch UI Sections

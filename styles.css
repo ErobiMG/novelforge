@@ -1779,6 +1779,59 @@ textarea:focus {
     .dropdown-menu::before {
         display: none !important;
     }
+
+    /* PWA Focus Mode Layout overrides */
+    #btn-toggle-focus {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 4px;
+        background: rgba(168, 85, 247, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+
+    body.focus-mode-active .sidebar {
+        display: none !important;
+    }
+    body.focus-mode-active .content-header {
+        display: none !important;
+    }
+    body.focus-mode-active .workshop-controls {
+        display: none !important;
+    }
+    body.focus-mode-active .main-content {
+        height: 100vh !important;
+        height: -webkit-fill-available !important;
+    }
+    body.focus-mode-active .scroll-container {
+        padding: 0 !important;
+        height: 100vh !important;
+        height: -webkit-fill-available !important;
+    }
+    body.focus-mode-active .workshop-container {
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+    body.focus-mode-active .workshop-output {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        height: 100vh !important;
+        height: -webkit-fill-available !important;
+    }
+    body.focus-mode-active .manuscript-viewport {
+        height: calc(100vh - 120px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 16px 12px !important;
+    }
+    body.focus-mode-active .manuscript-editor {
+        min-height: calc(100vh - 150px) !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
 }
 
 
