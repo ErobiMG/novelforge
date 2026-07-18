@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovelForge AI - Immersive Story Writing Studio</title>
+    <meta name="description" content="An advanced, feature-rich story building workspace powered by Gemini AI with character creation, worldbuilding, and plot outlines.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- PWA / Mobile Capabilities -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-180.png">
+</head>
+<body>
+    <!-- Ambient Particles & Glowing Orbital Orbs -->
+    <canvas id="ambient-particles" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0;"></canvas>
+    <div class="ambient-container">
+        <div class="ambient-orb orb-purple"></div>
+        <div class="ambient-orb orb-cyan"></div>
+        <div class="ambient-orb orb-gold"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-feather-pointed brand-logo"></i>
+                <h2>NovelForge <span class="accent-text">AI</span></h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-section="dashboard" id="btn-nav-dashboard">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </button>
+                <button class="nav-btn" data-section="characters" id="btn-nav-characters">
+                    <i class="fa-solid fa-users"></i> Characters
+                </button>
+                <button class="nav-btn" data-section="settings" id="btn-nav-settings">
+                    <i class="fa-solid fa-earth-americas"></i> Settings & World
+                </button>
+                <button class="nav-btn" data-section="plot" id="btn-nav-plot">
+                    <i class="fa-solid fa-timeline"></i> Plot Outline
+                </button>
+                <button class="nav-btn" data-section="knowledge" id="btn-nav-knowledge">
+                    <i class="fa-solid fa-book-open"></i> Knowledge Base
+                </button>
+                <button class="nav-btn" data-section="workshop" id="btn-nav-workshop">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Story Workshop
+                </button>
+                <div class="sidebar-divider"></div>
+                <button class="nav-btn config-btn" data-section="config" id="btn-nav-config">
+                    <i class="fa-solid fa-sliders"></i> AI Configuration
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>LoreCraft Workspace v1.0</p>
+                <span class="status-indicator connected" id="api-status-badge"><span class="pulse"></span> API Ready</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <header class="content-header">
+                <div class="header-info">
+                    <h1 id="section-title">Workspace Dashboard</h1>
+                    <p id="section-desc" class="text-muted">Overview of your active creative projects and lore repository.</p>
+                </div>
+                <div class="header-actions">
+                    <span class="project-indicator pointer" id="header-project-indicator" style="cursor: pointer;"><i class="fa-solid fa-folder-open"></i> Active: <strong id="active-project-name">Default Project</strong></span>
+                    <button class="btn btn-secondary btn-sm" id="btn-reset-data"><i class="fa-solid fa-trash-can"></i> Reset</button>
+                </div>
+            </header>
+
+            <div class="scroll-container">
+                <!-- SECTION: DASHBOARD -->
+                <section id="sec-dashboard" class="content-section active">
+                    <div class="dashboard-grid">
+                        <div class="stat-card float-box-1">
+                            <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-val" id="stat-characters-count">0</div>
+                            <div class="stat-lbl">Registered Characters</div>
+                        </div>
+                        <div class="stat-card float-box-2">
+                            <div class="stat-icon blue"><i class="fa-solid fa-earth-americas"></i></div>
+                            <div class="stat-val" id="stat-settings-count">0</div>
+                            <div class="stat-lbl">Locations & Settings</div>
+                        </div>
+                        <div class="stat-card float-box-3">
+                            <div class="stat-icon gold"><i class="fa-solid fa-timeline"></i></div>
+                            <div class="stat-val" id="stat-plots-count">0</div>
+                            <div class="stat-lbl">Plot Outline Chapters</div>
+                        </div>
+                        <div class="stat-card float-box-1">
+                            <div class="stat-icon emerald"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="stat-val" id="stat-knowledge-count">0</div>
+                            <div class="stat-lbl">Knowledge Items</div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-split mt-4">
+                        <div class="dashboard-panel float-box-2">
+                            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Quick Start Story</h3>
+                            <p class="text-muted mb-3">Jump straight into the Workshop using your current settings.</p>
+                            <div class="quick-start-box">
+                                <button class="btn btn-primary" id="btn-quick-workshop">Open Story Workshop <i class="fa-solid fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="dashboard-panel float-box-3">
+                            <h3><i class="fa-solid fa-history"></i> Recent Activity</h3>
+                            <ul class="activity-list" id="activity-log">
+                                <li class="activity-empty">No activity yet. Start by defining characters and plots!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: CHARACTERS -->
+                <section id="sec-characters" class="content-section">
+                    <div class="section-actions mb-4">
+                        <h3>Cast of Characters</h3>
+                        <button class="btn btn-primary" id="btn-add-character-modal"><i class="fa-solid fa-plus"></i> Add Character</button>
+                    </div>
+                    <div class="cards-grid" id="characters-grid">
+                        <!-- Dynamic Character Cards -->
+                    </div>
+                </section>
+
+                <!-- SECTION: SETTINGS & WORLD -->
+                <section id="sec-settings" class="content-section">
+                    <div class="section-actions mb-4">
+                        <h3>Locations & Settings</h3>
+                        <button class="btn btn-primary" id="btn-add-setting-modal"><i class="fa-solid fa-plus"></i> Add Location</button>
+                    </div>
+                    <div class="cards-grid" id="settings-grid">
+                        <!-- Dynamic Settings Cards -->
+                    </div>
+                </section>
+
+                <!-- SECTION: PLOT OUTLINE -->
+                <section id="sec-plot" class="content-section">
+                    <div class="section-actions mb-4">
+                        <h3>Plot Beats & Chapter Outlines</h3>
+                        <button class="btn btn-primary" id="btn-add-plot-modal"><i class="fa-solid fa-plus"></i> Add Plot Beat</button>
+                    </div>
+                    <div class="timeline" id="plot-timeline">
+                        <!-- Dynamic Timeline Items -->
+                    </div>
+                </section>
+
+                <!-- SECTION: KNOWLEDGE BASE -->
+                <section id="sec-knowledge" class="content-section">
+                    <div class="section-actions mb-4">
+                        <h3>Knowledge & Inspiration</h3>
+                        <button class="btn btn-primary" id="btn-add-knowledge-modal"><i class="fa-solid fa-plus"></i> Add Lore Document</button>
+                    </div>
+                    <p class="text-muted mb-4">Add existing stories, snippets, research, or style guides. You can inject these documents directly into the generator context for story inspiration.</p>
+                    <div class="cards-grid" id="knowledge-grid">
+                        <!-- Dynamic Knowledge Cards -->
+                    </div>
+                </section>
+
+                <!-- SECTION: STORY WORKSHOP -->
+                <section id="sec-workshop" class="content-section">
+                    <div class="workshop-container">
+                        <!-- Left Panel: Configurations -->
+                        <div class="workshop-controls glass float-box-1">
+                            <h3 class="panel-title"><i class="fa-solid fa-sliders"></i> Prompt & Narrative Settings</h3>
+                            
+                            <div class="form-group">
+                                <label for="ws-plot"><i class="fa-solid fa-keyboard"></i> Narrative Prompt / Story Plot *</label>
+                                <textarea id="ws-plot" rows="4" placeholder="Enter the core plot idea, action, or prompt for this segment (e.g. 'A rogue mage breaks into the royal archives...')" required></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="ws-genre"><i class="fa-solid fa-film"></i> Genre</label>
+                                    <select id="ws-genre">
+                                        <option value="Fantasy">Fantasy</option>
+                                        <option value="Sci-Fi">Sci-Fi</option>
+                                        <option value="Mystery">Mystery</option>
+                                        <option value="Thriller">Thriller</option>
+                                        <option value="Romance">Romance</option>
+                                        <option value="Horror">Horror</option>
+                                        <option value="Cyberpunk">Cyberpunk</option>
+                                        <option value="Historical Fiction">Historical Fiction</option>
+                                        <option value="Custom">Custom (Use additional context)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="ws-length"><i class="fa-solid fa-lines-leaning"></i> Story Length</label>
+                                    <select id="ws-length">
+                                        <option value="Short Story (~500 words)">Short Story (~500 words)</option>
+                                        <option value="Medium Narrative (~1500 words)" selected>Medium Narrative (~1500 words)</option>
+                                        <option value="Long Chapter (~3000 words)">Long Chapter (~3000 words)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="ws-pov"><i class="fa-solid fa-eye"></i> Point of View</label>
+                                    <select id="ws-pov">
+                                        <option value="First Person ('I, We')">First Person ("I, We")</option>
+                                        <option value="Third Person Limited ('He, She' - single perspective)" selected>Third Person Limited</option>
+                                        <option value="Third Person Omniscient ('He, She' - all-knowing)">Third Person Omniscient</option>
+                                        <option value="Second Person ('You')">Second Person ("You")</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="ws-dialogue"><i class="fa-solid fa-comments"></i> Dialogue Balance</label>
+                                    <select id="ws-dialogue">
+                                        <option value="Balanced Dialogue & Prose" selected>Balanced Dialogue & Prose</option>
+                                        <option value="Heavy Dialogue (Action/Conversation focused)">Heavy Dialogue</option>
+                                        <option value="Descriptive / Low Dialogue (Atmospheric/Inner Monologue)">Descriptive / Low Dialogue</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="ws-tone"><i class="fa-solid fa-masks-theater"></i> Tone</label>
+                                    <select id="ws-tone">
+                                        <option value="Dramatic & Serious" selected>Dramatic & Serious</option>
+                                        <option value="Dark & Gritty">Dark & Gritty</option>
+                                        <option value="Humorous & Witty">Humorous & Witty</option>
+                                        <option value="Mystical & Poetic">Mystical & Poetic</option>
+                                        <option value="Suspenseful & Tense">Suspenseful & Tense</option>
+                                        <option value="Epic & Adventurous">Epic & Adventurous</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="ws-language"><i class="fa-solid fa-language"></i> Language</label>
+                                    <select id="ws-language">
+                                        <option value="English" selected>English</option>
+                                        <option value="Vietnamese">Vietnamese</option>
+                                        <option value="Spanish">Spanish</option>
+                                        <option value="French">French</option>
+                                        <option value="German">German</option>
+                                        <option value="Japanese">Japanese</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Context Pickers -->
+                            <div class="form-group">
+                                <label><i class="fa-solid fa-users"></i> Cast to Include</label>
+                                <div class="checkbox-group" id="ws-character-picker">
+                                    <span class="text-muted text-sm">No characters defined yet.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fa-solid fa-map-pin"></i> Settings to Include</label>
+                                <div class="checkbox-group" id="ws-setting-picker">
+                                    <span class="text-muted text-sm">No settings defined yet.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ws-additional-context"><i class="fa-solid fa-circle-info"></i> Additional Context & Directives</label>
+                                <textarea id="ws-additional-context" rows="3" placeholder="Style details, writing constraints, forbidden elements, character interactions..."></textarea>
+                            </div>
+
+                            <!-- Action Triggers (Tools & Knowledge) -->
+                            <div class="workshop-toolbar">
+                                <div class="dropdown-wrapper">
+                                    <button class="btn btn-secondary btn-sm btn-dropdown" id="btn-workshop-tools">
+                                        <i class="fa-solid fa-toolbox"></i> Tools <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+                                    <div class="dropdown-menu" id="menu-workshop-tools">
+                                        <button class="dropdown-item" id="btn-tool-image"><i class="fa-solid fa-image"></i> Generate Scene Image</button>
+                                        <button class="dropdown-item" id="btn-tool-search"><i class="fa-solid fa-magnifying-glass"></i> Web Search Inspiration</button>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown-wrapper">
+                                    <button class="btn btn-secondary btn-sm btn-dropdown" id="btn-workshop-knowledge">
+                                        <i class="fa-solid fa-brain"></i> Knowledge <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-checkboxes" id="menu-workshop-knowledge">
+                                        <!-- Dynamic list of knowledge checkboxes -->
+                                        <div class="dropdown-empty">No lore documents yet</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Output & Live Editor -->
+                        <div class="workshop-output glass float-box-2">
+                            <div class="output-header">
+                                <h3 class="panel-title"><i class="fa-solid fa-pen-nib"></i> Live Manuscript</h3>
+                                <div class="output-status" id="ws-generation-status">
+                                    <span class="status-dot"></span> Ready
+                                </div>
+                            </div>
+                            
+                            <!-- The generated manuscript container -->
+                            <div class="manuscript-viewport">
+                                <div class="manuscript-editor" id="manuscript-viewer" contenteditable="true" placeholder="Your story will materialize here..."></div>
+                            </div>
+
+                            <div class="output-footer">
+                                <div class="left-actions">
+                                    <button class="btn btn-primary" id="btn-generate-story"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Story</button>
+                                    <button class="btn btn-danger hidden" id="btn-stop-story"><i class="fa-solid fa-circle-stop"></i> Stop</button>
+                                </div>
+                                <div class="right-actions">
+                                    <div class="dropdown-wrapper">
+                                        <button class="btn btn-secondary btn-sm btn-dropdown" id="btn-export-options">
+                                            <i class="fa-solid fa-download"></i> Export <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+                                        <div class="dropdown-menu right-aligned" id="menu-export-options">
+                                            <button class="dropdown-item" id="btn-export-txt"><i class="fa-solid fa-file-lines"></i> Plain Text (.txt)</button>
+                                            <button class="dropdown-item" id="btn-export-md"><i class="fa-solid fa-file-code"></i> Markdown (.md)</button>
+                                            <button class="dropdown-item" id="btn-export-print"><i class="fa-solid fa-print"></i> Print View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: AI CONFIGURATION -->
+                <section id="sec-config" class="content-section">
+                    <div class="config-container">
+                        <!-- Provider Card -->
+                        <div class="config-card float-box-1">
+                            <h3><i class="fa-solid fa-server"></i> API Provider Setup</h3>
+                            <p class="text-muted mb-3" style="font-size: 12px; margin-top: 4px;">Choose your active AI engine. Selecting OpenRouter, Groq, or Local API allows you to access unconstrained models with no built-in filters.</p>
+                            <div class="form-group">
+                                <label for="cfg-provider">Select Provider</label>
+                                <select id="cfg-provider">
+                                    <option value="google" selected>Google Gemini (Official)</option>
+                                    <option value="openrouter">OpenRouter (Unconstrained & Filter-free)</option>
+                                    <option value="groq">Groq (Blazing Fast & Unlimited)</option>
+                                    <option value="custom">Custom / Local API (Ollama, LM Studio)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Credentials Card -->
+                        <div class="config-card float-box-2">
+                            <h3><i class="fa-solid fa-gears"></i> Engine Settings</h3>
+                            <p class="text-muted mb-3" style="font-size: 12px; margin-top: 4px;">Provide credentials and select the specific model weight to load for story writing.</p>
+                            
+                            <!-- Gemini Config Group -->
+                            <div id="cfg-group-google" class="provider-config-group">
+                                <div class="form-group">
+                                    <label for="cfg-gemini-key">Gemini API Key</label>
+                                    <div class="input-password-wrapper">
+                                        <input type="password" id="cfg-gemini-key" placeholder="AIzaSy...">
+                                        <button type="button" class="btn-toggle-password" data-target="cfg-gemini-key">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span class="text-muted text-sm mt-1 block">Your key is stored strictly client-side. Obtain it from Google AI Studio.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-gemini-model">Gemini Model</label>
+                                    <select id="cfg-gemini-model">
+                                        <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
+                                        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="divider my-4"></div>
+                                
+                                <h3><i class="fa-solid fa-shield-halved"></i> Content Safety Filters</h3>
+                                <p class="text-muted mb-4" style="font-size: 12px; margin-top: 4px;">Modify safety thresholds. Setting all categories to <strong>BLOCK_NONE</strong> removes built-in restrictions to allow mature or dark literary elements.</p>
+                                <div class="safety-slider-group">
+                                    <div class="safety-control">
+                                        <div class="safety-meta">
+                                            <strong>Harassment</strong>
+                                            <span class="text-muted" id="lbl-safety-harassment">BLOCK_NONE</span>
+                                        </div>
+                                        <input type="range" class="safety-range" id="cfg-safety-harassment" min="0" max="3" value="0">
+                                    </div>
+                                    <div class="safety-control">
+                                        <div class="safety-meta">
+                                            <strong>Hate Speech</strong>
+                                            <span class="text-muted" id="lbl-safety-hate">BLOCK_NONE</span>
+                                        </div>
+                                        <input type="range" class="safety-range" id="cfg-safety-hate" min="0" max="3" value="0">
+                                    </div>
+                                    <div class="safety-control">
+                                        <div class="safety-meta">
+                                            <strong>Sexually Explicit</strong>
+                                            <span class="text-muted" id="lbl-safety-sex">BLOCK_NONE</span>
+                                        </div>
+                                        <input type="range" class="safety-range" id="cfg-safety-sex" min="0" max="3" value="0">
+                                    </div>
+                                    <div class="safety-control">
+                                        <div class="safety-meta">
+                                            <strong>Dangerous Content</strong>
+                                            <span class="text-muted" id="lbl-safety-danger">BLOCK_NONE</span>
+                                        </div>
+                                        <input type="range" class="safety-range" id="cfg-safety-danger" min="0" max="3" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- OpenRouter Config Group -->
+                            <div id="cfg-group-openrouter" class="provider-config-group hidden">
+                                <div class="form-group">
+                                    <label for="cfg-openrouter-key">OpenRouter API Key</label>
+                                    <div class="input-password-wrapper">
+                                        <input type="password" id="cfg-openrouter-key" placeholder="sk-or-v1-...">
+                                        <button type="button" class="btn-toggle-password" data-target="cfg-openrouter-key">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span class="text-muted text-sm mt-1 block">Your key is stored strictly client-side. Obtain it from OpenRouter.ai.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-openrouter-model">Unconstrained OpenRouter Model</label>
+                                    <select id="cfg-openrouter-model">
+                                        <option value="meta-llama/llama-3.3-70b-instruct:free" selected>Llama 3.3 70B Instruct (FREE & UNLIMITED - Rich Prose)</option>
+                                        <option value="qwen/qwen-2.5-72b-instruct:free">Qwen 2.5 72B Instruct (FREE & UNLIMITED - Claude 3.5 Tier)</option>
+                                        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (FREE & UNLIMITED - Advanced Reasoning)</option>
+                                        <option value="gryphe/mythomax-l2-13b">MythoMax L2 13B (Famously Uncensored roleplay)</option>
+                                        <option value="cognitivecomputations/dolphin-mixtral-8x7b">Dolphin Mixtral 8x7b (Completely Unfiltered)</option>
+                                        <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B Instruct (Expressive prose)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Groq Config Group -->
+                            <div id="cfg-group-groq" class="provider-config-group hidden">
+                                <div class="form-group">
+                                    <label for="cfg-groq-key">Groq API Key</label>
+                                    <div class="input-password-wrapper">
+                                        <input type="password" id="cfg-groq-key" placeholder="gsk_...">
+                                        <button type="button" class="btn-toggle-password" data-target="cfg-groq-key">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span class="text-muted text-sm mt-1 block">Obtain your key from the Groq Developer Console.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-groq-model">Groq Model</label>
+                                    <select id="cfg-groq-model">
+                                        <option value="deepseek-r1-distill-llama-70b" selected>DeepSeek R1 Distill Llama 70B (Ultra-fast reasoning)</option>
+                                        <option value="llama-3.3-70b-versatile">Llama 3.3 70B (High-quality & speedy)</option>
+                                        <option value="llama-3.1-8b-instant">Llama 3.1 8B (Sub-second latency)</option>
+                                        <option value="mixtral-8x7b-32768">Mixtral 8x7B (Large context window)</option>
+                                        <option value="gemma2-9b-it">Gemma 2 9B (Highly responsive)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Custom Config Group -->
+                            <div id="cfg-group-custom" class="provider-config-group hidden">
+                                <div class="form-group">
+                                    <label for="cfg-custom-url">Base API Endpoint URL</label>
+                                    <input type="text" id="cfg-custom-url" placeholder="e.g. http://localhost:11434/v1">
+                                    <span class="text-muted text-sm mt-1 block">Compatible with Ollama (http://localhost:11434/v1) and LM Studio (http://localhost:5000/v1).</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-custom-model">Model Name</label>
+                                    <input type="text" id="cfg-custom-model" placeholder="e.g. llama3-uncensored, dolphin-mistral">
+                                    <span class="text-muted text-sm mt-1 block">Enter the exact tag of the model loaded in your local server.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-custom-key">API Key (Optional)</label>
+                                    <div class="input-password-wrapper">
+                                        <input type="password" id="cfg-custom-key" placeholder="Optional authorization key">
+                                        <button type="button" class="btn-toggle-password" data-target="cfg-custom-key">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Instruction Card -->
+                        <div class="config-card float-box-3">
+                            <h3><i class="fa-solid fa-terminal"></i> Custom System Instruction</h3>
+                            <p class="text-muted mb-3" style="font-size: 12px; margin-top: 4px;">Provide base rules to guide the model. Instructions establish fictional boundaries to bypass filters.</p>
+                            <div class="form-group">
+                                <textarea id="cfg-system-instruction" rows="5" placeholder="System rules given to the AI..."></textarea>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary mt-3" id="btn-save-config" style="width: 100%; padding: 12px;"><i class="fa-solid fa-floppy-disk"></i> Save Configuration</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: ADD/EDIT CHARACTER -->
+    <div class="modal-backdrop" id="modal-character">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3 id="modal-char-title">Add New Character</h3>
+                <button class="btn-close-modal" id="btn-close-char"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="char-id">
+                <div class="form-group">
+                    <label for="char-name">Character Name *</label>
+                    <input type="text" id="char-name" placeholder="e.g. Roland Eldon" required>
+                </div>
+                <div class="form-group">
+                    <label for="char-role">Role in Story *</label>
+                    <input type="text" id="char-role" placeholder="e.g. Protagonist, Reluctant Wizard" required>
+                </div>
+                <div class="form-group">
+                    <label for="char-appearance">Appearance & Visual Style</label>
+                    <textarea id="char-appearance" rows="2" placeholder="e.g. Wears a tattered crimson cloak, tall, piercing silver-grey eyes, carrying a notched silver staff..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="char-personality">Personality & Quirks</label>
+                    <textarea id="char-personality" rows="2" placeholder="e.g. Cynical but fiercely loyal. Speaks in riddles when stressed. Loves black tea..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="char-bio">Bio & Background</label>
+                    <textarea id="char-bio" rows="3" placeholder="e.g. Expelled from the Royal Arcane College for forbidden research on temporal displacement..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="char-portrait">Portrait Image URL</label>
+                    <div class="input-with-button">
+                        <input type="text" id="char-portrait" placeholder="https://... or auto-generate">
+                        <button class="btn btn-secondary btn-sm" id="btn-char-portrait-gen" type="button">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Draw
+                        </button>
+                    </div>
+                    <span class="text-muted text-sm mt-1 block">Click 'AI Draw' to render a custom portrait using Pollinations AI from details above.</span>
+                </div>
+                <div class="image-preview-container hidden" id="char-preview-box">
+                    <img src="" alt="Character Preview" id="char-preview-img">
+                    <div class="preview-overlay"><i class="fa-solid fa-spinner fa-spin"></i> Rendering Character...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-char">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-char">Save Character</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT SETTING -->
+    <div class="modal-backdrop" id="modal-setting">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3 id="modal-setting-title">Add New Location</h3>
+                <button class="btn-close-modal" id="btn-close-setting"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="setting-id">
+                <div class="form-group">
+                    <label for="setting-name">Location / Setting Name *</label>
+                    <input type="text" id="setting-name" placeholder="e.g. The Whispering Archives" required>
+                </div>
+                <div class="form-group">
+                    <label for="setting-type">Location Type *</label>
+                    <input type="text" id="setting-type" placeholder="e.g. Ancient Library, Floating Sanctuary" required>
+                </div>
+                <div class="form-group">
+                    <label for="setting-description">Detailed Description & Sensory Elements</label>
+                    <textarea id="setting-description" rows="3" placeholder="e.g. Massive bookshelves reaching into endless shadows. Smells of ancient parchment, old leather, and a hint of ozone. Echoes of silent footsteps..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="setting-lore">History & Significance</label>
+                    <textarea id="setting-lore" rows="3" placeholder="e.g. Created before the First Sundering to store the true names of primordial spirits..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="setting-image">Environment Concept Image URL</label>
+                    <div class="input-with-button">
+                        <input type="text" id="setting-image" placeholder="https://... or auto-generate">
+                        <button class="btn btn-secondary btn-sm" id="btn-setting-image-gen" type="button">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Draw
+                        </button>
+                    </div>
+                </div>
+                <div class="image-preview-container hidden" id="setting-preview-box">
+                    <img src="" alt="Setting Preview" id="setting-preview-img">
+                    <div class="preview-overlay"><i class="fa-solid fa-spinner fa-spin"></i> Rendering Environment...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-setting">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-setting">Save Location</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT PLOT -->
+    <div class="modal-backdrop" id="modal-plot">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3 id="modal-plot-title">Add Plot Beat</h3>
+                <button class="btn-close-modal" id="btn-close-plot"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="plot-id">
+                <div class="form-group">
+                    <label for="plot-title">Chapter / Beat Title *</label>
+                    <input type="text" id="plot-title" placeholder="e.g. Chapter 1: The Theft of Light" required>
+                </div>
+                <div class="form-group">
+                    <label for="plot-sequence">Sequence Order *</label>
+                    <input type="number" id="plot-sequence" value="1" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="plot-summary">Narrative Summary & Conflict *</label>
+                    <textarea id="plot-summary" rows="4" placeholder="Summary of the main conflict, events, and what happens in this scene..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="plot-characters">Key Characters Involved</label>
+                    <input type="text" id="plot-characters" placeholder="e.g. Roland, Eldon">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-plot">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-plot">Save Plot Beat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT KNOWLEDGE -->
+    <div class="modal-backdrop" id="modal-knowledge">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3 id="modal-knowledge-title">Add Lore Document</h3>
+                <button class="btn-close-modal" id="btn-close-knowledge"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="knowledge-id">
+                <div class="form-group">
+                    <label for="knowledge-title">Document Title *</label>
+                    <input type="text" id="knowledge-title" placeholder="e.g. Timeline of the Elven Rebellion" required>
+                </div>
+                <div class="form-group">
+                    <label for="knowledge-tags">Tags (Comma-separated)</label>
+                    <input type="text" id="knowledge-tags" placeholder="e.g. history, rebellion, magic">
+                </div>
+                <div class="form-group">
+                    <label for="knowledge-content">Document Content *</label>
+                    <textarea id="knowledge-content" rows="8" placeholder="Paste stories, encyclopedia articles, rules of magic, or historical records that the AI can reference..." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-knowledge">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-knowledge">Save Document</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TOOL - IMAGE GENERATOR -->
+    <div class="modal-backdrop" id="modal-tool-image">
+        <div class="modal glass wide">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-image"></i> Workspace Image Generator</h3>
+                <button class="btn-close-modal" id="btn-close-tool-image"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="tool-img-prompt">Image Generation Prompt</label>
+                    <textarea id="tool-img-prompt" rows="3" placeholder="Describe the scene, art style, lighting, characters... (e.g. 'A magical library with glowing blue books, digital painting style, dark fantasy vibe')"></textarea>
+                </div>
+                <button class="btn btn-primary" id="btn-tool-img-generate"><i class="fa-solid fa-wand-magic-sparkles"></i> Render Image</button>
+                
+                <div class="image-workspace-result mt-4">
+                    <div class="image-placeholder" id="tool-img-placeholder">
+                        <i class="fa-regular fa-image"></i>
+                        <p>Generated image will appear here</p>
+                    </div>
+                    <img src="" alt="AI Generated Output" id="tool-img-output" class="hidden">
+                    <div class="render-overlay hidden" id="tool-img-overlay">
+                        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                        <p class="mt-2">Invoking Pollinations AI...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-tool-img-close">Close</button>
+                <button class="btn btn-primary hidden" id="btn-tool-img-use"><i class="fa-solid fa-check"></i> Copy URL to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TOOL - WEB SEARCH -->
+    <div class="modal-backdrop" id="modal-tool-search">
+        <div class="modal glass wide">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-magnifying-glass"></i> Inspiration Web Search</h3>
+                <button class="btn-close-modal" id="btn-close-tool-search"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="tool-search-query">Search Query</label>
+                    <div class="input-with-button">
+                        <input type="text" id="tool-search-query" placeholder="e.g. medieval poisons symptoms, ancient greek ship names...">
+                        <button class="btn btn-primary" id="btn-tool-search-run"><i class="fa-solid fa-search"></i> Search</button>
+                    </div>
+                </div>
+                
+                <div class="search-results-panel mt-4">
+                    <h4>Search Results</h4>
+                    <div class="search-results-list" id="tool-search-results">
+                        <div class="search-empty">Enter a query to search the web for lore inspiration and details.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-tool-search-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PROJECT MANAGER -->
+    <div class="modal-backdrop" id="modal-project-manager">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-folder-open"></i> Manage Projects</h3>
+                <button class="btn-close-modal" id="btn-close-projects"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-project-name">Create New Project</label>
+                    <div class="input-with-button">
+                        <input type="text" id="new-project-name" placeholder="e.g. Science Fiction Epic">
+                        <button class="btn btn-primary" id="btn-create-project"><i class="fa-solid fa-plus"></i> Create</button>
+                    </div>
+                </div>
+                
+                <div class="search-results-panel mt-4">
+                    <h4>Your Projects</h4>
+                    <div id="project-list-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding: 4px 0;">
+                        <!-- Dynamic list of projects -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-projects-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CUSTOM CONFIRMATION DIALOG -->
+    <div class="modal-backdrop" id="modal-confirm">
+        <div class="modal glass" style="max-width: 400px; margin-top: 15vh;">
+            <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+                <h3 style="color: var(--danger); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-triangle-exclamation"></i> Confirm Action</h3>
+            </div>
+            <div class="modal-body" style="padding-top: 12px; padding-bottom: 8px;">
+                <p id="confirm-message" style="font-size: 13.5px; line-height: 1.6; color: var(--text-main); font-family: var(--font-ui);"></p>
+            </div>
+            <div class="modal-footer" style="border-top: none; padding-top: 0; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-secondary" id="btn-confirm-cancel" style="padding: 6px 14px;">Cancel</button>
+                <button class="btn btn-danger" id="btn-confirm-proceed" style="padding: 6px 14px;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=202607172333"></script>
+</body>
+</html>
