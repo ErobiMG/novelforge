@@ -1530,3 +1530,205 @@ textarea:focus {
     will-change: transform;
 }
 
+/* ==========================================================================
+   MOBILE RESPONSIVENESS OVERRIDES (iOS Tab-Bar & Bottom Sheet Modals)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Global layout stacking */
+    .app-container {
+        flex-direction: column;
+        height: 100vh;
+        height: -webkit-fill-available; /* Safari viewport fix */
+        overflow: hidden;
+    }
+
+    /* Redesign Left Sidebar to Bottom Tab-Bar */
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 68px;
+        flex-direction: row;
+        padding: 0 8px;
+        z-index: 999;
+        border-right: none;
+        border-top: 1px solid var(--border-color);
+        background: rgba(8, 17, 11, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 0;
+        margin: 0;
+    }
+
+    /* Hide unnecessary sidebar elements on mobile */
+    .brand, 
+    .sidebar-footer, 
+    .sidebar-divider {
+        display: none !important;
+    }
+
+    /* Distribute tab items horizontally */
+    .sidebar-nav {
+        flex-direction: row !important;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        margin: 0 !important;
+        gap: 0 !important;
+    }
+
+    .nav-btn {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px !important;
+        padding: 6px 0 !important;
+        gap: 4px !important;
+        background: transparent !important;
+        border: none !important;
+        color: var(--text-muted);
+        flex: 1;
+        height: 100%;
+        border-radius: 8px;
+    }
+
+    .nav-btn i {
+        font-size: 18px !important;
+        margin: 0 !important;
+    }
+
+    .nav-btn.active {
+        color: var(--accent) !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .nav-btn.config-btn {
+        margin-top: 0 !important;
+    }
+
+    /* Main Content Spacing for Tab-Bar clearance */
+    .main-content {
+        padding: 12px 12px 85px 12px !important;
+        overflow-y: auto;
+        height: calc(100vh - 68px);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+    }
+
+    .header-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Stat Cards grid resize */
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    .stat-card {
+        padding: 12px !important;
+    }
+
+    .stat-val {
+        font-size: 20px !important;
+    }
+
+    .stat-lbl {
+        font-size: 10px !important;
+        line-height: 1.3;
+    }
+
+    /* Stack panels vertically */
+    .dashboard-split, 
+    .workshop-container, 
+    .config-container {
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+
+    .workshop-controls, 
+    .workshop-output {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Stack character/location lists into 1 column */
+    .cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    /* Make manuscript editor responsive */
+    .manuscript-viewport {
+        padding: 8px !important;
+    }
+
+    .manuscript-editor {
+        min-height: 320px !important;
+        padding: 14px !important;
+        font-size: 14px !important;
+        line-height: 1.6;
+    }
+
+    /* iOS Bottom Sheet Modals */
+    .modal {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 85vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        position: fixed;
+        bottom: 0;
+        margin: 0 !important;
+        animation: slideUpMobile 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        border-bottom: none;
+    }
+
+    .modal-backdrop {
+        align-items: flex-end !important;
+    }
+
+    @keyframes slideUpMobile {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
+    /* Modal Form layouts */
+    .modal-body {
+        padding: 16px !important;
+        max-height: calc(85vh - 70px) !important;
+        overflow-y: auto;
+    }
+
+    /* Dropdown overlays positioning */
+    .dropdown-menu {
+        position: fixed !important;
+        bottom: 75px !important;
+        top: auto !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: calc(100vw - 24px) !important;
+        max-height: 320px !important;
+        z-index: 1000 !important;
+        box-shadow: 0 -10px 25px rgba(0,0,0,0.5) !important;
+    }
+
+    .dropdown-menu::before {
+        display: none !important;
+    }
+}
+
+
