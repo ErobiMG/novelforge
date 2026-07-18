@@ -20,31 +20,32 @@
     <link rel="apple-touch-icon" href="icon-180.png">
 </head>
 <body>
-    <!-- Ambient Particles & Glowing Orbital Orbs -->
-    <canvas id="ambient-particles" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0;"></canvas>
-    <div class="ambient-container">
-        <div class="ambient-orb orb-purple"></div>
-        <div class="ambient-orb orb-cyan"></div>
-        <div class="ambient-orb orb-gold"></div>
-    </div>
-
-    <div class="app-container">
-        <!-- Custom Title Bar -->
+    <div class="app-window">
+        <!-- Custom Drag Titlebar (Shown only inside Electron desktop app) -->
         <div class="custom-titlebar">
             <div class="titlebar-brand">
                 <i class="fa-solid fa-feather-pointed"></i>
                 <span>NovelForge AI</span>
             </div>
+            <div class="titlebar-drag-area"></div>
             <div class="titlebar-controls">
-                <button class="titlebar-btn" id="tb-min" title="Minimize"><i class="fa-solid fa-minus"></i></button>
-                <button class="titlebar-btn" id="tb-max" title="Maximize"><i class="fa-solid fa-expand"></i></button>
-                <button class="titlebar-btn close-btn" id="tb-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+                <button class="titlebar-btn" id="btn-win-minimize" title="Minimize"><i class="fa-solid fa-minus"></i></button>
+                <button class="titlebar-btn" id="btn-win-maximize" title="Maximize"><i class="fa-regular fa-square"></i></button>
+                <button class="titlebar-btn close-btn" id="btn-win-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </div>
 
-        <div class="app-layout-body">
-            <!-- Sidebar Navigation -->
-            <aside class="sidebar">
+        <!-- Ambient Particles & Glowing Orbital Orbs -->
+        <canvas id="ambient-particles" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0;"></canvas>
+        <div class="ambient-container">
+            <div class="ambient-orb orb-purple"></div>
+            <div class="ambient-orb orb-cyan"></div>
+            <div class="ambient-orb orb-gold"></div>
+        </div>
+
+        <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
             <div class="brand">
                 <i class="fa-solid fa-feather-pointed brand-logo"></i>
                 <h2>NovelForge <span class="accent-text">AI</span></h2>
@@ -515,7 +516,6 @@
                 </section>
             </div>
         </main>
-        </div>
     </div>
 
     <!-- MODAL: ADD/EDIT CHARACTER -->
@@ -783,6 +783,7 @@
             </div>
         </div>
     </div>
+    </div> <!-- Close .app-window -->
 
     <script src="app.js?v=202607172333"></script>
 </body>

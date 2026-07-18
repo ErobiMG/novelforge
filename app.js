@@ -48,6 +48,20 @@ let streamController = null;
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+    // Detect Electron environment
+    if (window.electronAPI) {
+        document.body.classList.add('is-electron');
+        
+        const btnMin = document.getElementById('btn-win-minimize');
+        if (btnMin) btnMin.addEventListener('click', () => window.electronAPI.minimize());
+        
+        const btnMax = document.getElementById('btn-win-maximize');
+        if (btnMax) btnMax.addEventListener('click', () => window.electronAPI.maximize());
+        
+        const btnClose = document.getElementById('btn-win-close');
+        if (btnClose) btnClose.addEventListener('click', () => window.electronAPI.close());
+    }
+
     loadState();
     registerEventListeners();
     renderAll();
@@ -632,18 +646,6 @@ function registerEventListeners() {
                 btnToggleFocus.style.borderColor = 'rgba(168, 85, 247, 0.3)';
             }
         });
-    }
-
-    // Electron Custom Titlebar Window control bindings
-    if (window.electronAPI) {
-        document.body.classList.add('electron-env');
-        const btnMin = document.getElementById('tb-min');
-        const btnMax = document.getElementById('tb-max');
-        const btnClose = document.getElementById('tb-close');
-
-        if (btnMin) btnMin.addEventListener('click', () => window.electronAPI.minimize());
-        if (btnMax) btnMax.addEventListener('click', () => window.electronAPI.maximize());
-        if (btnClose) btnClose.addEventListener('click', () => window.electronAPI.close());
     }
 }
 

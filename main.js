@@ -7,15 +7,16 @@ function createWindow() {
         height: 868,
         minWidth: 1024,
         minHeight: 768,
-        frame: false, // Frameless borderless app window
-        transparent: true, // Allows native rounded CSS borders
+        frame: false, // Turn off native OS title bar and borders
+        transparent: true, // Allow custom rounded HTML frame corners
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
             contextIsolation: true,
-            sandbox: false
+            sandbox: true,
+            preload: path.join(__dirname, 'preload.js')
         },
         title: "NovelForge AI - Immersive Story Writing Studio",
+        backgroundColor: "#00000000", // Transparent container wrapper
         show: false
     });
 
@@ -25,14 +26,11 @@ function createWindow() {
         win.show();
     });
 
-    // Strip default operating system chrome menus
+    // Remove default browser menu bar for a clean standalone desktop feel
     Menu.setApplicationMenu(null);
 
-    // Bind custom window frame IPC handlers
-    ipcMain.on('window-minimize', () => {
-        win.minimize();
-    });
-
+    // IPC handlers for custom title bar controls
+    ipcMain.on('window-minimize', () => win.minimize());
     ipcMain.on('window-maximize', () => {
         if (win.isMaximized()) {
             win.unmaximize();
@@ -40,10 +38,7 @@ function createWindow() {
             win.maximize();
         }
     });
-
-    ipcMain.on('window-close', () => {
-        win.close();
-    });
+    ipcMain.on('window-close', () => win.close());
 }
 
 app.whenReady().then(() => {

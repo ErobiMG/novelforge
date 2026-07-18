@@ -52,54 +52,39 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* App Container & Layout */
-.app-container {
+/* App Window Wrapper (Supports custom rounded corners in desktop mode) */
+.app-window {
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
-}
-
-.app-layout-body {
-    display: flex;
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-/* Custom Title Bar (Hidden by default, shown in Electron) */
-.custom-titlebar {
-    display: none;
-    height: 34px;
-    background-color: rgba(10, 10, 15, 0.9);
-    border-bottom: 1px solid var(--border-color);
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    user-select: none;
-    -webkit-app-region: drag;
-    z-index: 1000;
-}
-
-body.electron-env .custom-titlebar {
-    display: flex;
-}
-
-body.electron-env {
-    background: transparent !important;
-}
-
-body.electron-env .app-container {
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
     overflow: hidden;
     background-color: var(--bg-primary);
+    box-sizing: border-box;
 }
 
-body.electron-env .app-layout-body {
-    height: calc(100vh - 34px);
+body.is-electron .app-window {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* Custom Titlebar (Drawn only inside Electron app) */
+.custom-titlebar {
+    display: none; /* Hidden in web browser mode */
+    height: 34px;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    user-select: none;
+    -webkit-app-region: drag; /* Allows moving the frameless window */
+    z-index: 9999;
+}
+
+body.is-electron .custom-titlebar {
+    display: flex;
 }
 
 .titlebar-brand {
@@ -108,10 +93,8 @@ body.electron-env .app-layout-body {
     gap: 8px;
     font-family: var(--font-heading);
     font-size: 11px;
-    font-weight: 800;
-    color: var(--text-main);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted);
 }
 
 .titlebar-brand i {
@@ -119,37 +102,56 @@ body.electron-env .app-layout-body {
     text-shadow: 0 0 5px var(--accent-glow);
 }
 
+.titlebar-drag-area {
+    flex-grow: 1;
+    height: 100%;
+}
+
 .titlebar-controls {
     display: flex;
     align-items: center;
     gap: 4px;
-    -webkit-app-region: no-drag;
+    -webkit-app-region: no-drag; /* Clickable control buttons */
 }
 
 .titlebar-btn {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text-muted);
-    font-size: 12px;
-    width: 28px;
-    height: 24px;
-    border-radius: 4px;
+    width: 32px;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    color: var(--text-muted);
     cursor: pointer;
+    font-size: 10px;
     transition: var(--transition-fast);
 }
 
 .titlebar-btn:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.08);
     color: var(--text-main);
+    border-color: rgba(255, 255, 255, 0.15);
 }
 
 .titlebar-btn.close-btn:hover {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: #ef4444;
+    background-color: var(--danger);
+    color: #ffffff;
+    border-color: var(--danger);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Adjust .app-container to fill remaining height if titlebar is shown */
+body.is-electron .app-container {
+    height: calc(100vh - 34px);
+}
+
+/* App Container & Layout */
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
 }
 
 /* Sidebar Styling */
