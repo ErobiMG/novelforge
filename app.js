@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initAmbientLeaves();
     init3DTilt();
 
-    // Register PWA Service Worker for mobile installs
-    if ('serviceWorker' in navigator) {
+    // Register PWA Service Worker for mobile installs (only on HTTP/HTTPS hosting)
+    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
         navigator.serviceWorker.register('sw.js')
             .then(reg => console.log('PWA Service Worker registered successfully:', reg.scope))
             .catch(err => console.log('PWA Service Worker registration failed:', err));

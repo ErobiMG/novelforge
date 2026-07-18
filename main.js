@@ -1,7 +1,14 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, session } = require('electron');
 const path = require('path');
 
 function createWindow() {
+    // Clear storage data to unregister any corrupted service workers from file:// protocol
+    if (session && session.defaultSession) {
+        session.defaultSession.clearStorageData({
+            storages: ['serviceworkers']
+        }).catch(err => console.error('Failed to clear service workers storage:', err));
+    }
+
     const win = new BrowserWindow({
         width: 1366,
         height: 868,
