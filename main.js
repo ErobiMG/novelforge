@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('path');
 
 function createWindow() {
@@ -7,13 +7,15 @@ function createWindow() {
         height: 868,
         minWidth: 1024,
         minHeight: 768,
+        frame: false, // Frameless borderless app window
+        transparent: true, // Allows native rounded CSS borders
         webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
             contextIsolation: true,
-            sandbox: true
+            sandbox: false
         },
         title: "NovelForge AI - Immersive Story Writing Studio",
-        backgroundColor: "#020503",
         show: false
     });
 
@@ -23,8 +25,25 @@ function createWindow() {
         win.show();
     });
 
-    // Remove default browser menu bar for a clean standalone desktop feel
+    // Strip default operating system chrome menus
     Menu.setApplicationMenu(null);
+
+    // Bind custom window frame IPC handlers
+    ipcMain.on('window-minimize', () => {
+        win.minimize();
+    });
+
+    ipcMain.on('window-maximize', () => {
+        if (win.isMaximized()) {
+            win.unmaximize();
+        } else {
+            win.maximize();
+        }
+    });
+
+    ipcMain.on('window-close', () => {
+        win.close();
+    });
 }
 
 app.whenReady().then(() => {

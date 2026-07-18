@@ -633,6 +633,18 @@ function registerEventListeners() {
             }
         });
     }
+
+    // Electron Custom Titlebar Window control bindings
+    if (window.electronAPI) {
+        document.body.classList.add('electron-env');
+        const btnMin = document.getElementById('tb-min');
+        const btnMax = document.getElementById('tb-max');
+        const btnClose = document.getElementById('tb-close');
+
+        if (btnMin) btnMin.addEventListener('click', () => window.electronAPI.minimize());
+        if (btnMax) btnMax.addEventListener('click', () => window.electronAPI.maximize());
+        if (btnClose) btnClose.addEventListener('click', () => window.electronAPI.close());
+    }
 }
 
 // Switch UI Sections

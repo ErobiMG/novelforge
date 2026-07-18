@@ -29,8 +29,22 @@
     </div>
 
     <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
+        <!-- Custom Title Bar -->
+        <div class="custom-titlebar">
+            <div class="titlebar-brand">
+                <i class="fa-solid fa-feather-pointed"></i>
+                <span>NovelForge AI</span>
+            </div>
+            <div class="titlebar-controls">
+                <button class="titlebar-btn" id="tb-min" title="Minimize"><i class="fa-solid fa-minus"></i></button>
+                <button class="titlebar-btn" id="tb-max" title="Maximize"><i class="fa-solid fa-expand"></i></button>
+                <button class="titlebar-btn close-btn" id="tb-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+
+        <div class="app-layout-body">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
             <div class="brand">
                 <i class="fa-solid fa-feather-pointed brand-logo"></i>
                 <h2>NovelForge <span class="accent-text">AI</span></h2>
@@ -501,6 +515,7 @@
                 </section>
             </div>
         </main>
+        </div>
     </div>
 
     <!-- MODAL: ADD/EDIT CHARACTER -->
